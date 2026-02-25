@@ -11,7 +11,7 @@ export async function POST(request: Request) {
 
     const user = await User.findOne({ email });
 
-    if (!user) {
+    if (!user || !user.password) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
@@ -24,7 +24,7 @@ export async function POST(request: Request) {
     const token = await signJWT({ userId: user._id, email: user.email, role: user.role });
 
     const response = NextResponse.json({ success: true, user: { name: user.name, email: user.email, role: user.role } });
-    
+
     response.cookies.set('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
