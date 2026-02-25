@@ -48,7 +48,7 @@ Shop Smart Online is a modern, high-performance affiliate blogging platform desi
    MONGODB_URI=your_mongodb_connection_string
    JWT_SECRET=your_jwt_secret
    APP_URL=http://localhost:3000
-   ADMIN_EMAIL=admin@shopsmartonline.com
+   ADMIN_EMAIL=email
    ADMIN_PASSWORD=your_password
    ```
 
