@@ -49,13 +49,17 @@ export default function GuideForm({ initialData, isEditing }: GuideFormProps) {
 
   useEffect(() => {
     Promise.all([
-      fetch('/api/categories').then((res) => res.json()),
-      fetch('/api/tags').then((res) => res.json()),
+      fetch('/api/categories').then((res) => res.ok ? res.json() : []),
+      fetch('/api/tags').then((res) => res.ok ? res.json() : []),
     ]).then(([cats, tgs]) => {
-      setCategories(cats);
-      setTags(tgs);
+      setCategories(Array.isArray(cats) ? cats : []);
+      setTags(Array.isArray(tgs) ? tgs : []);
+    }).catch(err => {
+      console.error('Failed to load categories or tags:', err);
+      setFeedback({ type: 'error', message: 'Failed to load categories or tags. Please refresh.' });
     });
   }, []);
+
 
   const onSubmit = async (data: any) => {
     setIsSubmitting(true);

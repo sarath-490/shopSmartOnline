@@ -21,7 +21,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
-    const token = await signJWT({ userId: user._id, email: user.email, role: user.role });
+    const token = await signJWT({ userId: user._id.toString(), email: user.email, role: user.role });
 
     const response = NextResponse.json({ success: true, user: { name: user.name, email: user.email, role: user.role } });
 
@@ -32,6 +32,7 @@ export async function POST(request: Request) {
       maxAge: 60 * 60 * 24, // 1 day
       path: '/',
     });
+
 
     return response;
   } catch (error) {

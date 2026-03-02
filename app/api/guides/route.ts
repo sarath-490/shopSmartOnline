@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/db';
 import Guide from '@/models/Guide';
+import User from '@/models/User'; // Explicit import for registration
+import Category from '@/models/Category'; // Explicit import for registration
+import Tag from '@/models/Tag'; // Explicit import for registration
 import { slugify } from '@/lib/utils';
 import { getSession } from '@/lib/auth';
 
@@ -22,6 +25,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json(guides);
   } catch (error) {
+    console.error('Fetch guides error:', error);
     return NextResponse.json({ error: 'Failed to fetch guides' }, { status: 500 });
   }
 }
@@ -37,8 +41,8 @@ export async function POST(request: Request) {
     const data = await request.json();
 
     // Basic validation
-    if (!data.title || !data.content || !data.category) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    if (!data.title || !data.content || !data.category || !data.summary) {
+      return NextResponse.json({ error: 'Missing required fields: title, content, summary, and category are required' }, { status: 400 });
     }
 
     const slug = data.slug || slugify(data.title);
@@ -47,18 +51,33 @@ export async function POST(request: Request) {
     let uniqueSlug = slug;
     const existing = await Guide.findOne({ slug });
     if (existing) {
-      uniqueSlug = `${slug}-${Math.random().toString(36).substring(7)}`;
+      uniqueSlug = `${slug}-${Math.random().toString(36).substring(2, 7)}`;
+    }
+
+    // Robust ID extraction and validation
+    let authorId = String(session.userId);
+    if (!authorId || authorId === '[object Object]' || !/^[0-9a-fA-F]{24}$/.test(authorId)) {
+      return NextResponse.json({
+        error: 'Outdated or invalid session. Please Log Out and Log In again to refresh.',
+        debug: { userId: String(session.userId) }
+      }, { status: 403 });
     }
 
     const guide = await Guide.create({
       ...data,
       slug: uniqueSlug,
-      author: String(session.userId), // Ensure it's a string for BSON conversion
+      author: authorId,
     });
 
+
+
     return NextResponse.json(guide);
-  } catch (error) {
+  } catch (error: any) {
     console.error('Create blog error:', error);
-    return NextResponse.json({ error: 'Failed to create blog' }, { status: 500 });
+    return NextResponse.json({
+      error: 'Failed to create blog',
+      details: error.message || 'Unknown error'
+    }, { status: 500 });
   }
 }
+
