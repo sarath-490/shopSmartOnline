@@ -18,6 +18,7 @@ import {
 import dbConnect from '@/lib/db';
 import Guide from '@/models/Guide';
 import Category from '@/models/Category';
+import User from '@/models/User';
 import { formatDate } from '@/lib/utils';
 import {
   calculateReadingTime,

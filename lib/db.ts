@@ -1,5 +1,13 @@
 import mongoose from 'mongoose';
 
+// Register models
+import '@/models/User';
+import '@/models/Category';
+import '@/models/Guide';
+import '@/models/Tag';
+import '@/models/AffiliateLink';
+import '@/models/ClickTracking';
+
 const MONGODB_URI = process.env.MONGODB_URI;
 
 if (!MONGODB_URI) {

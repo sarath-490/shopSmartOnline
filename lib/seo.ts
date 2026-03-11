@@ -38,10 +38,14 @@ export function generateArticleSchema(guide: {
             name: 'Shop Smart Online',
             url: BASE_URL,
         },
-        datePublished: guide.publishDate
+        datePublished: guide.publishDate && !isNaN(new Date(guide.publishDate).getTime())
             ? new Date(guide.publishDate).toISOString()
-            : new Date(guide.updatedAt).toISOString(),
-        dateModified: new Date(guide.updatedAt).toISOString(),
+            : guide.updatedAt && !isNaN(new Date(guide.updatedAt).getTime())
+                ? new Date(guide.updatedAt).toISOString()
+                : new Date().toISOString(),
+        dateModified: guide.updatedAt && !isNaN(new Date(guide.updatedAt).getTime())
+            ? new Date(guide.updatedAt).toISOString()
+            : new Date().toISOString(),
         mainEntityOfPage: {
             '@type': 'WebPage',
             '@id': `${BASE_URL}/guides/${guide.slug}`,

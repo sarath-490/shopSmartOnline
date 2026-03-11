@@ -40,6 +40,11 @@ const nextConfig: NextConfig = {
         hostname: '**.amazonaws.com',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'chatgpt.com',
+        pathname: '/**',
+      },
     ],
   },
   output: 'standalone',
